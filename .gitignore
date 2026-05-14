@@ -5,4 +5,4 @@ venv/
 *.pyc
 data/index.json
 .coverage
-htmlcov/
+htmlcov/.DS_Store
