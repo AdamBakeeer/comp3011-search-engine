@@ -1,4 +1,9 @@
-from src.search import print_word, find_query
+from src.search import (
+    print_word,
+    find_query,
+    get_total_documents,
+    calculate_tfidf_score,
+)
 
 
 def sample_index():
@@ -49,15 +54,31 @@ def test_print_word_returns_none_for_empty_input():
     assert result is None
 
 
+def test_get_total_documents_counts_unique_pages():
+    index = sample_index()
+
+    assert get_total_documents(index) == 3
+
+
+def test_calculate_tfidf_score_increases_with_frequency():
+    index = sample_index()
+    total_documents = get_total_documents(index)
+
+    page1_score = calculate_tfidf_score(index, "good", "page1", total_documents)
+    page2_score = calculate_tfidf_score(index, "good", "page2", total_documents)
+
+    assert page1_score > page2_score
+
+
 def test_find_query_single_word_returns_ranked_results():
     index = sample_index()
 
     results = find_query(index, "good")
 
-    assert results == [
-        {"url": "page1", "score": 2},
-        {"url": "page2", "score": 1},
-    ]
+    assert len(results) == 2
+    assert results[0]["url"] == "page1"
+    assert results[1]["url"] == "page2"
+    assert results[0]["score"] > results[1]["score"]
 
 
 def test_find_query_multi_word_uses_and_logic():
@@ -65,9 +86,8 @@ def test_find_query_multi_word_uses_and_logic():
 
     results = find_query(index, "good friends")
 
-    assert results == [
-        {"url": "page1", "score": 3}
-    ]
+    assert len(results) == 1
+    assert results[0]["url"] == "page1"
 
 
 def test_find_query_is_case_insensitive():
@@ -75,9 +95,8 @@ def test_find_query_is_case_insensitive():
 
     results = find_query(index, "GOOD FRIENDS")
 
-    assert results == [
-        {"url": "page1", "score": 3}
-    ]
+    assert len(results) == 1
+    assert results[0]["url"] == "page1"
 
 
 def test_find_query_empty_query_returns_empty_list():
@@ -99,20 +118,29 @@ def test_find_query_requires_all_terms_to_match():
 
     assert results == []
 
+
 def test_find_query_handles_punctuation():
     index = sample_index()
 
     results = find_query(index, "good, friends!")
 
-    assert results == [
-        {"url": "page1", "score": 3}
-    ]
+    assert len(results) == 1
+    assert results[0]["url"] == "page1"
+
 
 def test_find_query_handles_extra_spaces():
     index = sample_index()
 
     results = find_query(index, "   good   friends   ")
 
-    assert results == [
-        {"url": "page1", "score": 3}
-    ]
+    assert len(results) == 1
+    assert results[0]["url"] == "page1"
+
+
+def test_find_query_repeated_terms_do_not_inflate_score():
+    index = sample_index()
+
+    normal_results = find_query(index, "good")
+    repeated_results = find_query(index, "good good")
+
+    assert repeated_results == normal_results
