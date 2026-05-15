@@ -99,6 +99,12 @@ def main():
 
             if not results:
                 print("No results found.")
+
+                from src.search import suggest_terms
+                suggestions = suggest_terms(index, query)
+
+                if suggestions:
+                    print(f"Did you mean: {', '.join(suggestions)}?")
             else:
                 for result in results:
                     print(f"{result['url']} | score: {result['score']}")

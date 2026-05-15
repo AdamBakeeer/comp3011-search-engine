@@ -12,7 +12,7 @@ single-word and multi-word queries. Results are ranked using TF-IDF
 
 from src.indexer import tokenize
 import math
-
+import difflib
 
 def print_word(index, word):
     """
@@ -151,3 +151,37 @@ def find_query(index, query):
         })
 
     return sorted(results, key=lambda result: result["score"], reverse=True)
+
+def suggest_terms(index: dict, query: str, limit: int = 3) -> list[str]:
+    """
+    Suggest similar indexed terms for words not found in the index.
+
+    Args:
+        index: The inverted index.
+        query: User search query.
+        limit: Maximum number of suggestions per missing word.
+
+    Returns:
+        A list of suggested indexed terms.
+    """
+    query_words = tokenize(query)
+
+    if not query_words:
+        return []
+
+    suggestions = []
+
+    for word in query_words:
+        if word in index:
+            continue
+
+        matches = difflib.get_close_matches(
+            word,
+            index.keys(),
+            n=limit,
+            cutoff=0.8,
+        )
+
+        suggestions.extend(matches)
+
+    return list(dict.fromkeys(suggestions))

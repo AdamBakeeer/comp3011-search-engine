@@ -3,6 +3,7 @@ from src.search import (
     find_query,
     get_total_documents,
     calculate_tfidf_score,
+    suggest_terms,
 )
 
 
@@ -144,3 +145,35 @@ def test_find_query_repeated_terms_do_not_inflate_score():
     repeated_results = find_query(index, "good good")
 
     assert repeated_results == normal_results
+    
+def test_suggest_terms_returns_close_matches_for_misspelled_word():
+    index = sample_index()
+
+    suggestions = suggest_terms(index, "frends")
+
+    assert "friends" in suggestions
+
+
+def test_suggest_terms_ignores_words_already_in_index():
+    index = sample_index()
+
+    suggestions = suggest_terms(index, "good frends")
+
+    assert "good" not in suggestions
+    assert "friends" in suggestions
+
+
+def test_suggest_terms_returns_empty_list_for_valid_query():
+    index = sample_index()
+
+    suggestions = suggest_terms(index, "good friends")
+
+    assert suggestions == []
+
+
+def test_suggest_terms_returns_empty_list_for_empty_query():
+    index = sample_index()
+
+    suggestions = suggest_terms(index, "")
+
+    assert suggestions == []
