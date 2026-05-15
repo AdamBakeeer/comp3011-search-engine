@@ -6,3 +6,4 @@ venv/
 data/index.json
 .coverage
 htmlcov/.DS_Store
+.DS_Store
