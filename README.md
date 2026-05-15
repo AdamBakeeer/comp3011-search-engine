@@ -1,383 +1,378 @@
-COMP3011 Search Engine Coursework
+# COMP3011 Search Engine Coursework
+
+Tests
 
 A lightweight search engine implemented in Python for the COMP3011 coursework assignment. The project crawls the website https://quotes.toscrape.com/, builds an inverted index with positional statistics, persists the index to disk, and provides a command-line interface for searching indexed pages.
 
-⸻
+---
 
-Features
+# Features
 
-* Focused web crawler with pagination traversal
-* Configurable politeness window
-* Inverted index with:
-    * word frequencies
-    * positional indexing
-* Persistent JSON-based index storage
-* Command-line search interface
-* Single-word and multi-word search
-* Boolean AND retrieval
-* TF-IDF ranking
-* Query suggestions for misspelled words
-* Comprehensive automated test suite
-* Coverage analysis with pytest-cov
-* Continuous Integration using GitHub Actions
-* Benchmarking and complexity analysis
+- Focused web crawler with pagination traversal
+- Configurable politeness window
+- Inverted index with:
+  - word frequencies
+  - positional indexing
+- Persistent JSON-based index storage
+- Command-line search interface
+- Single-word and multi-word search
+- Boolean AND retrieval
+- TF-IDF ranking
+- Query suggestions for misspelled words
+- Comprehensive automated test suite
+- Coverage analysis with pytest-cov
+- Continuous Integration using GitHub Actions
+- Benchmarking and complexity analysis
 
-⸻
+---
 
-Project Structure
+# Requirements
 
-comp3011-search-engine/
-│
-├── src/
-│   ├── crawler.py
-│   ├── indexer.py
-│   ├── search.py
-│   └── main.py
-│
-├── tests/
-│   ├── test_crawler.py
-│   ├── test_indexer.py
-│   ├── test_search.py
-│   └── test_main.py
-│
-├── data/
-│   └── index.json
-│
-├── benchmark.py
-├── requirements.txt
-├── pytest.ini
-└── README.md
+- Python 3.12+
+- pip
 
-⸻
+---
 
-System Architecture
+# Quick Start
 
-The system is divided into four main components:
+Clone the repository:
 
-1. Crawler
+bash git clone https://github.com/AdamBakeeer/comp3011-search-engine.git cd comp3011-search-engine 
+
+Install dependencies:
+
+bash pip install -r requirements.txt 
+
+Run the application:
+
+bash python -m src.main 
+
+---
+
+# Project Structure
+
+text comp3011-search-engine/ │ ├── src/ │   ├── crawler.py │   ├── indexer.py │   ├── search.py │   └── main.py │ ├── tests/ │   ├── test_crawler.py │   ├── test_indexer.py │   ├── test_search.py │   └── test_main.py │ ├── data/ │   └── index.json │ ├── .github/workflows/ │   └── tests.yml │ ├── benchmark.py ├── requirements.txt ├── pytest.ini └── README.md 
+
+---
+
+# System Architecture
+
+The system is divided into four main components.
+
+## 1. Crawler
 
 The crawler sequentially traverses the paginated quotes website while respecting a configurable politeness window.
 
-Responsibilities:
+### Responsibilities
 
-* fetch HTML pages
-* extract quote text
-* follow pagination links
-* prevent duplicate crawling
-* handle request failures gracefully
+- Fetch HTML pages
+- Extract quote text
+- Follow pagination links
+- Prevent duplicate crawling
+- Handle request failures gracefully
 
-Key design decisions:
+### Key Design Decisions
 
-* focused crawler rather than general-purpose crawler
-* BeautifulSoup CSS selectors for precise extraction
-* visited-set tracking for duplicate prevention
-* configurable delay for testing and benchmarking
+- Focused crawler rather than a general-purpose crawler
+- BeautifulSoup CSS selectors for precise extraction
+- Visited-set tracking for duplicate prevention
+- Configurable delay for testing and benchmarking
 
-⸻
+---
 
-2. Indexer
+## 2. Indexer
 
 The indexer builds an inverted index from crawled pages.
 
-Structure:
+### Structure
 
-word -> page URL -> statistics
+text word -> page URL -> statistics 
 
 Each indexed term stores:
+- frequency
+- token positions
 
-* frequency
-* token positions
+### Example
 
-Example:
+json "life": {   "https://quotes.toscrape.com/page/2/": {     "frequency": 4,     "positions": [1, 45, 67, 80]   } } 
 
-"life": {
-  "https://quotes.toscrape.com/page/2/": {
-    "frequency": 4,
-    "positions": [1, 45, 67, 80]
-  }
-}
+Positional indexing was included to support future extensibility toward phrase-search retrieval.
 
-Key design decisions:
+### Key Design Decisions
 
-* inverted indexing for efficient retrieval
-* positional indexing for future extensibility
-* regex-based tokenisation
-* JSON persistence for simplicity and transparency
+- Inverted indexing for efficient retrieval
+- Positional indexing for extensibility
+- Regex-based tokenisation
+- JSON persistence for simplicity and transparency
 
-⸻
+---
 
-3. Search Engine
+## 3. Search Engine
 
 The search engine supports:
 
-* single-word queries
-* multi-word queries
-* Boolean AND retrieval
-* TF-IDF ranking
-* query suggestions
+- Single-word queries
+- Multi-word queries
+- Boolean AND retrieval
+- TF-IDF ranking
+- Query suggestions
 
-Example:
+### Example Query
 
-find good friends
+text find good friends 
 
 Only pages containing all query terms are returned.
 
-Ranking uses TF-IDF weighting:
+### TF-IDF Ranking
 
-TF-IDF = Term Frequency × Inverse Document Frequency
+The search engine uses TF-IDF weighting:
+
+text TF-IDF = Term Frequency × Inverse Document Frequency 
 
 This reduces the influence of overly common words and improves retrieval quality.
 
-Query suggestions use lightweight string similarity matching via Python’s difflib.
+### Query Suggestions
+
+Query suggestions use approximate string matching via Python’s difflib.
 
 Example:
 
-find frends
+text find frends 
 
 Output:
 
-Did you mean: friends?
+text Did you mean: friends? 
 
-⸻
+---
 
-4. Command-Line Interface
+## 4. Command-Line Interface
 
 The CLI integrates crawling, indexing, persistence, and retrieval into a simple interactive shell.
 
-Supported commands:
+### Supported Commands
 
-build
-load
-print <word>
-find <query>
-exit
+text build load print <word> find <query> exit 
 
-⸻
+---
 
-Installation
+# Installation
 
-Clone the repository
+## Clone the Repository
 
-git clone https://github.com/AdamBakeeer/comp3011-search-engine.git
-cd comp3011-search-engine
+bash git clone https://github.com/AdamBakeeer/comp3011-search-engine.git cd comp3011-search-engine 
 
-Create virtual environment (optional)
+## Create Virtual Environment (Optional)
 
-python -m venv venv
-source venv/bin/activate
+bash python -m venv venv source venv/bin/activate 
 
-Install dependencies
+## Install Dependencies
 
-pip install -r requirements.txt
+bash pip install -r requirements.txt 
 
+---
 
-⸻
-
-Usage
+# Usage
 
 Run the CLI:
 
-python -m src.main
+bash python -m src.main 
 
-Example session:
+### Example Session
 
-Search Engine Tool
-Commands: build, load, print <word>, find <query>, exit
-> build
-Index built and saved. Pages indexed: 10
-> load
-Index loaded successfully.
-> print life
-{...}
-> find good friends
-https://quotes.toscrape.com/page/2/ | score: 4.355955
-> find frends
-No results found.
-Did you mean: friends?
-> exit
-Goodbye.
+text Search Engine Tool Commands: build, load, print <word>, find <query>, exit  > build Index built and saved. Pages indexed: 10  > load Index loaded successfully.  > print life {...}  > find good friends https://quotes.toscrape.com/page/2/ | score: 4.355955  > find frends No results found. Did you mean: friends?  > exit Goodbye. 
 
-⸻
+---
 
-Testing
+# Testing
 
 Run the automated test suite:
 
-pytest
+bash pytest 
 
 Run tests with coverage:
 
-pytest --cov=src --cov-report=term-missing
+bash pytest --cov=src --cov-report=term-missing 
+
+### Test Suite Coverage
 
 The test suite includes:
 
-* crawler tests
-* indexing tests
-* search tests
-* CLI tests
-* edge-case testing
-* exception handling
-* mocked network requests
+- Crawler tests
+- Indexing tests
+- Search tests
+- CLI tests
+- Edge-case testing
+- Exception handling
+- Mocked network requests
 
-⸻
+---
 
-Continuous Integration
+# Test Coverage
+
+Current coverage results:
+
+- crawler.py → 91%
+- indexer.py → 100%
+- search.py → 100%
+- main.py → 72%
+
+Overall project coverage: approximately 87%.
+
+The crawler intentionally does not reach 100% coverage because the real HTTP request layer was mocked during testing. This was a deliberate design decision to avoid network dependency and ensure deterministic automated tests.
+
+---
+
+# Continuous Integration
 
 The project uses GitHub Actions for automated testing.
 
 On every push or pull request:
 
-* dependencies are installed
-* the test suite executes automatically
-* coverage analysis runs automatically
+- Dependencies are installed automatically
+- The test suite executes automatically
+- Coverage analysis runs automatically
 
 Workflow file:
 
-.github/workflows/tests.yml
+text .github/workflows/tests.yml 
 
-⸻
+---
 
-Benchmarking
+# Benchmarking
 
 Run benchmarking:
 
-python benchmark.py
+bash python benchmark.py 
 
-Example benchmark results:
+### Example Benchmark Results
 
-Pages crawled: 10
-Unique terms: 680
-Index file size: 169.89 KB
-Crawl time without delay: 3.3603s
-Index build time: 0.0033s
-Index save time: 0.0143s
-Search time: 0.000184s
+text Pages crawled: 10 Unique terms: 680 Index file size: 169.89 KB Crawl time without delay: 3.3603s Index build time: 0.0033s Index save time: 0.0143s Search time: 0.000184s 
 
-Key observations:
+### Key Observations
 
-* crawling dominates runtime due to networking overhead
-* indexing is highly efficient due to linear token processing
-* search retrieval is effectively instantaneous
-* TF-IDF slightly increases query cost while improving ranking quality
+- Crawling dominates runtime due to networking overhead
+- Indexing is highly efficient due to linear token processing
+- Search retrieval is effectively instantaneous
+- TF-IDF slightly increases query cost while improving ranking quality
 
-⸻
+---
 
-Complexity Analysis
+# Complexity Analysis
 
-Crawler
+## Crawler
 
-Time Complexity: O(P)
+text Time Complexity: O(P) 
 
 Where:
-
-* P = number of pages crawled
+- P = number of pages crawled
 
 Each page is visited once.
 
-⸻
+---
 
-Indexer
+## Indexer
 
-Time Complexity: O(N)
+text Time Complexity: O(N) 
 
 Where:
-
-* N = total number of tokens
+- N = total number of tokens
 
 Each token is processed exactly once.
 
-⸻
+---
 
-Search
+## Search
 
 Query retrieval complexity depends on:
 
-* posting-list lookup
-* set intersection
-* TF-IDF scoring
-* sorting results
+- Posting-list lookup
+- Set intersection
+- TF-IDF scoring
+- Sorting results
 
 The inverted index avoids scanning every document during retrieval.
 
-⸻
+---
 
-Testing Strategy
+# Testing Strategy
 
 The project uses deterministic automated testing with mocked dependencies.
 
-Crawler tests validate:
+## Crawler Tests Validate
 
-* pagination traversal
-* quote extraction
-* duplicate prevention
-* request failures
-* empty pages
-* partial crawl recovery
+- Pagination traversal
+- Quote extraction
+- Duplicate prevention
+- Request failures
+- Empty pages
+- Partial crawl recovery
 
-Indexer tests validate:
+## Indexer Tests Validate
 
-* tokenisation
-* positional indexing
-* persistence
-* frequency counting
-* exception handling
+- Tokenisation
+- Positional indexing
+- Persistence
+- Frequency counting
+- Exception handling
 
-Search tests validate:
+## Search Tests Validate
 
-* Boolean retrieval
-* TF-IDF ranking
-* query suggestions
-* punctuation handling
-* case insensitivity
-* malformed input
+- Boolean retrieval
+- TF-IDF ranking
+- Query suggestions
+- Punctuation handling
+- Case insensitivity
+- Malformed input
 
 Network requests are mocked to avoid dependency on live website availability.
 
-⸻
+---
 
-GenAI Usage and Critical Reflection
+# GenAI Usage and Critical Reflection
 
 Generative AI tools were used as development assistants for:
 
-* discussing algorithmic design choices
-* debugging implementation issues
-* generating testing ideas
-* reviewing code structure
-* exploring retrieval strategies such as TF-IDF ranking
+- Discussing algorithmic design choices
+- Debugging implementation issues
+- Generating testing ideas
+- Reviewing code structure
+- Exploring retrieval strategies such as TF-IDF ranking
 
 However, all AI-generated suggestions were manually reviewed, tested, modified, and validated before integration.
 
-Challenges encountered when using AI:
+## Challenges Encountered
 
-* some generated solutions introduced unnecessary complexity
-* some code suggestions failed under edge-case testing
-* AI occasionally suggested inefficient or incorrect data structures
-* generated tests initially missed important edge cases such as duplicate crawl loops and deterministic request mocking
+- Some generated solutions introduced unnecessary complexity
+- Some code suggestions failed under edge-case testing
+- AI occasionally suggested inefficient or incorrect data structures
+- Generated tests initially missed important edge cases such as duplicate crawl loops and deterministic request mocking
+
+## Key Learning Outcomes
 
 Using AI reinforced the importance of:
 
-* understanding algorithms rather than copying implementations
-* validating generated code through testing
-* benchmarking and profiling performance
-* manually reasoning about trade-offs and system behaviour
+- Understanding algorithms rather than copying implementations
+- Validating generated code through testing
+- Benchmarking and profiling performance
+- Manually reasoning about trade-offs and system behaviour
 
-⸻
+---
 
-Future Improvements
+# Future Improvements
 
 Potential future extensions include:
 
-* phrase search using positional indexing
-* stemming and stop-word removal
-* OR query support
-* ranked snippet generation
-* incremental indexing
-* distributed crawling
-* web-based user interface
+- Phrase search using positional indexing
+- Stemming and stop-word removal
+- OR query support
+- Ranked snippet generation
+- Incremental indexing
+- Distributed crawling
+- Web-based user interface
 
-⸻
+---
 
-Author
+# Author
 
 Adam Bakeer
 
