@@ -88,3 +88,45 @@ def test_crawl_site_stops_gracefully_on_request_error(monkeypatch):
     result = crawl_site(delay=0)
 
     assert result == []
+    
+def test_crawl_site_prevents_duplicate_url_loop(monkeypatch):
+    pages = {
+        "https://quotes.toscrape.com/": """
+            <div class="quote"><span class="text">“Loop quote.”</span></div>
+            <li class="next"><a href="/">Next</a></li>
+        """
+    }
+
+    def fake_fetch_page(url):
+        return pages[url]
+
+    monkeypatch.setattr("src.crawler.fetch_page", fake_fetch_page)
+
+    result = crawl_site(delay=0)
+
+    assert len(result) == 1
+    assert result[0]["url"] == "https://quotes.toscrape.com/"
+    assert result[0]["text"] == "“Loop quote.”"
+
+
+def test_crawl_site_keeps_successful_pages_before_request_error(monkeypatch):
+    pages = {
+        "https://quotes.toscrape.com/": """
+            <div class="quote"><span class="text">“Successful page.”</span></div>
+            <li class="next"><a href="/page/2/">Next</a></li>
+        """
+    }
+
+    def fake_fetch_page(url):
+        if url == "https://quotes.toscrape.com/":
+            return pages[url]
+
+        raise requests.RequestException("Network failure on second page")
+
+    monkeypatch.setattr("src.crawler.fetch_page", fake_fetch_page)
+
+    result = crawl_site(delay=0)
+
+    assert len(result) == 1
+    assert result[0]["url"] == "https://quotes.toscrape.com/"
+    assert result[0]["text"] == "“Successful page.”"
