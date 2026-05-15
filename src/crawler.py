@@ -10,14 +10,12 @@ POLITENESS_DELAY = 6
 
 
 def fetch_page(url):
-    """Fetch a page and return its HTML content."""
     response = requests.get(url, timeout=10)
     response.raise_for_status()
     return response.text
 
 
 def parse_quotes_page(html, url):
-    """Extract quote text from a page and find the next page URL."""
     soup = BeautifulSoup(html, "html.parser")
 
     quotes = []
@@ -35,7 +33,6 @@ def parse_quotes_page(html, url):
 
 
 def crawl_site(start_url=BASE_URL, delay=POLITENESS_DELAY):
-    """Crawl all quote pages and return extracted text for each page."""
     pages = []
     visited = set()
     current_url = start_url
