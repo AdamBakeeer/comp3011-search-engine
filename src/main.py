@@ -1,9 +1,39 @@
+"""
+
+Command-line interface for the COMP3011 search engine coursework.
+
+This module provides the interactive shell required by the assignment.
+
+It connects the crawler, indexer, persistence layer, and search logic
+
+through the commands: build, load, print, find, and exit.
+
+"""
+
 from src.crawler import crawl_site
 from src.indexer import build_index, save_index, load_index
 from src.search import print_word, find_query
 
 
 def main():
+    """
+
+    Run the interactive command-line search tool.
+
+    Supported commands:
+
+        build            Crawl the website, build the index, and save it.
+
+        load             Load a previously saved index from disk.
+
+        print <word>     Print the inverted index entry for a word.
+
+        find <query>     Find pages containing the query terms.
+
+        exit             Exit the program.
+
+    """
+    
     index = None
 
     print("Search Engine Tool")
