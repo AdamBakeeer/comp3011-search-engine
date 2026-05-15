@@ -32,3 +32,16 @@ def build_index(pages):
             index[word][url]["positions"].append(position)
 
     return index
+
+def save_index(index, file_path=INDEX_FILE):
+    file_path.parent.mkdir(exist_ok=True)
+    
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(index, file, indent=2)
+
+def load_index(file_path=INDEX_FILE):
+    if not file_path.exists():
+        raise FileNotFoundError(f"Index file not found: {file_path}")
+    
+    with open(file_path, "r", encoding="utf-8") as file:
+        return json.load(file)
