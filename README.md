@@ -68,8 +68,9 @@ comp3011-search-engine/
 ├── data/
 │   └── index.json
 │
-├── .github/workflows/
-│   └── tests.yml
+├── .github/
+│   └── workflows/
+│       └── tests.yml
 │
 ├── benchmark.py
 ├── requirements.txt
