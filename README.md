@@ -51,8 +51,30 @@ bash python -m src.main
 
 # Project Structure
 
-text comp3011-search-engine/ │ ├── src/ │   ├── crawler.py │   ├── indexer.py │   ├── search.py │   └── main.py │ ├── tests/ │   ├── test_crawler.py │   ├── test_indexer.py │   ├── test_search.py │   └── test_main.py │ ├── data/ │   └── index.json │ ├── .github/workflows/ │   └── tests.yml │ ├── benchmark.py ├── requirements.txt ├── pytest.ini └── README.md 
-
+comp3011-search-engine/
+│
+├── src/
+│   ├── crawler.py
+│   ├── indexer.py
+│   ├── search.py
+│   └── main.py
+│
+├── tests/
+│   ├── test_crawler.py
+│   ├── test_indexer.py
+│   ├── test_search.py
+│   └── test_main.py
+│
+├── data/
+│   └── index.json
+│
+├── .github/workflows/
+│   └── tests.yml
+│
+├── benchmark.py
+├── requirements.txt
+├── pytest.ini
+└── README.md
 ---
 
 # System Architecture
